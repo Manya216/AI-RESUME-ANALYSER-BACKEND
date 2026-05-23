@@ -1,9 +1,0 @@
-fastapi
-uvicorn
-python-multipart
-pandas
-numpy
-scikit-learn
-PyPDF2
-sqlalchemy
-sqlalchemy.orm
