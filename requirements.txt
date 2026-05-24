@@ -6,3 +6,6 @@ python-multipart
 python-jose
 passlib
 PyMuPDF
+bcrypt
+passlib
+cffi
