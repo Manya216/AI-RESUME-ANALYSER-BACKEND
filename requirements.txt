@@ -6,6 +6,6 @@ python-multipart
 python-jose
 passlib
 PyMuPDF
-bcrypt
-passlib
 cffi
+bcrypt==4.1.2
+passlib==1.7.4
