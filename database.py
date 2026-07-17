@@ -23,7 +23,7 @@ engine = create_engine(
     pool_pre_ping=True,
     pool_recycle=300,
     connect_args={
-        "ssl": {}
+        "connect_timeout": 10
     }
 )
 SessionLocal = sessionmaker(
