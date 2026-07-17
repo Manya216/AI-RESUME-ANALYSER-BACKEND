@@ -18,8 +18,14 @@ DATABASE_URL = URL.create(
     database="defaultdb"
 )
 
-engine = create_engine(DATABASE_URL)
-
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    pool_recycle=300,
+    connect_args={
+        "connect_timeout": 10
+    }
+)
 SessionLocal = sessionmaker(
 
     autocommit=False,
