@@ -7,15 +7,15 @@ DATABASE_URL = URL.create(
 
     drivername="mysql+pymysql",
 
-    username="root",
+    username="avnadmin",
 
-    password="IIuqEFAiqTEuKbCnhblqICyOQWppunyK",
+    password="AVNS_fa71Ufz4fQaveW75ME4",
 
-     host="kodama.proxy.rlwy.net",
+    host="mysql-c46e11d-resumeanalysis.a.aivencloud.com",
 
-    port=31618,
+    port=19801,
 
-    database="railway"
+    database="defaultdb"
 )
 
 engine = create_engine(DATABASE_URL)
