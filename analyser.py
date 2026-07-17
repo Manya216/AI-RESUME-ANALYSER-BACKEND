@@ -1,110 +1,45 @@
-import re
+from ai_matcher import calculate_ai_match
+
+from ai_suggestions import generate_suggestions
 
 
-# -----------------------------
-# ALL SKILLS DATABASE
-# -----------------------------
-
-skills_db = [
-
-    "python",
-    "c++",
-    "java",
-    "html",
-    "css",
-    "javascript",
-    "react",
-    "fastapi",
-    "sql",
-    "mysql",
-    "mongodb",
-    "machine learning",
-    "git",
-    "docker",
-    "numpy",
-    "pandas",
-    "nodejs",
-    "express",
-    "aws",
-    "firebase",
-    "tailwind",
-    "bootstrap"
-]
 
 
-# -----------------------------
-# ROLE-WISE SKILLS
-# -----------------------------
 
-frontend_skills = [
+def analyser_resume(
 
-    "html",
-    "css",
-    "javascript",
-    "react",
-    "tailwind",
-    "bootstrap"
-]
+    resume_text,
+
+    job_description
+
+):
 
 
-backend_skills = [
-
-    "python",
-    "fastapi",
-    "sql",
-    "mysql",
-    "mongodb",
-    "nodejs",
-    "express"
-]
+    text = resume_text.lower()
 
 
-ml_skills = [
 
-    "machine learning",
-    "numpy",
-    "pandas"
-]
-
-
-# -----------------------------
-# MAIN ANALYZER FUNCTION
-# -----------------------------
-
-def analyser_resume(text):
-
-    text = text.lower()
-
-    found_skills = []
 
 
     # -----------------------------
-    # SKILL DETECTION
+    # SECTION CHECK
     # -----------------------------
 
-    for skill in skills_db:
-
-        pattern = r"\b" + re.escape(skill) + r"\b"
-
-        if re.search(pattern, text):
-
-            found_skills.append(skill)
-
-
-    # -----------------------------
-    # SECTION DETECTION
-    # -----------------------------
 
     education_present = (
 
         "education" in text
+
     )
+
 
 
     projects_present = (
 
         "project" in text
+
     )
+
 
 
     experience_present = (
@@ -114,231 +49,253 @@ def analyser_resume(text):
         or
 
         "internship" in text
+
     )
+
 
 
     certification_present = (
 
-        "certification" in text
+        "certificate" in text
 
         or
 
-        "certificate" in text
+        "certification" in text
+
     )
+
 
 
     github_present = (
 
         "github.com" in text
+
     )
+
 
 
     linkedin_present = (
 
         "linkedin.com" in text
+
     )
 
 
+
+
+
     # -----------------------------
-    # REALISTIC ATS SCORE
+    # SEMANTIC MATCH
     # -----------------------------
 
-    score = 0
 
+    ai_score = calculate_ai_match(
 
-    # SKILLS SCORE (MAX 30)
+        resume_text,
 
-    skills_score = min(
+        job_description
 
-        (len(found_skills) / 10) * 30,
-
-        30
     )
 
-    score += skills_score
 
 
-    # PROJECTS SCORE
+
+
+    # -----------------------------
+    # OLLAMA AI SUGGESTIONS
+    # -----------------------------
+
+
+    ai_result = generate_suggestions(
+
+        resume_text,
+
+        job_description
+
+    )
+
+
+
+
+
+    if not isinstance(
+
+        ai_result,
+
+        dict
+
+    ):
+
+        ai_result = {}
+
+
+
+
+
+    matched_skills = ai_result.get(
+
+        "matched_skills",
+
+        []
+
+    )
+
+
+
+    missing_skills = ai_result.get(
+
+        "missing_skills",
+
+        []
+
+    )
+
+
+
+    suggestions = ai_result.get(
+
+        "suggestions",
+
+        []
+
+    )
+
+
+
+
+
+    # -----------------------------
+    # QUALITY SCORE
+    # -----------------------------
+
+
+    quality_score = 0
+
+
+
+    if education_present:
+
+        quality_score += 20
+
+
 
     if projects_present:
 
-        score += 20
+        quality_score += 20
 
 
-    # EXPERIENCE SCORE
 
     if experience_present:
 
-        score += 20
+        quality_score += 20
 
 
-    # CERTIFICATIONS SCORE
 
     if certification_present:
 
-        score += 10
+        quality_score += 10
 
 
-    # GITHUB SCORE
 
     if github_present:
 
-        score += 10
+        quality_score += 15
 
 
-    # LINKEDIN SCORE
 
     if linkedin_present:
 
-        score += 10
+        quality_score += 15
 
 
-    # -----------------------------
-    # PENALTIES
-    # -----------------------------
 
-    if len(found_skills) < 4:
-
-        score -= 10
-
-
-    if not projects_present:
-
-        score -= 15
-
-
-    if not github_present:
-
-        score -= 5
 
 
     # -----------------------------
-    # LIMIT SCORE
+    # FINAL ATS SCORE
     # -----------------------------
 
-    score = max(0, min(round(score), 100))
+
+    skill_bonus = 0
 
 
-    # -----------------------------
-    # ROLE DETECTION
-    # -----------------------------
 
-    frontend_count = 0
+    if isinstance(
 
-    backend_count = 0
+        matched_skills,
 
-    ml_count = 0
+        list
 
+    ):
 
-    for skill in frontend_skills:
-
-        if skill in found_skills:
-
-            frontend_count += 1
+        skill_bonus = len(matched_skills) * 5
 
 
-    for skill in backend_skills:
-
-        if skill in found_skills:
-
-            backend_count += 1
 
 
-    for skill in ml_skills:
 
-        if skill in found_skills:
+    final_score = round(
 
-            ml_count += 1
+        (0.7 * ai_score)
 
+        +
 
-    role = "General Software Developer"
+        (0.2 * quality_score)
 
+        +
 
-    max_count = max(
+        (0.1 * skill_bonus)
 
-        frontend_count,
-
-        backend_count,
-
-        ml_count
     )
 
 
-    if max_count == frontend_count and max_count != 0:
 
-        role = "Frontend Developer"
+    final_score = min(
 
+        final_score,
 
-    elif max_count == backend_count and max_count != 0:
+        100
 
-        role = "Backend Developer"
-
-
-    elif max_count == ml_count and max_count != 0:
-
-        role = "ML Engineer"
+    )
 
 
-    # -----------------------------
-    # SUGGESTIONS
-    # -----------------------------
-
-    suggestions = []
 
 
-    if not projects_present:
-
-        suggestions.append(
-
-            "Add strong projects section"
-        )
-
-
-   
-
-
-   
-
-
-    if len(found_skills) < 5:
-
-        suggestions.append(
-
-            "Add more technical skills"
-        )
-
-
-    if not certification_present:
-
-        suggestions.append(
-
-            "Add certifications"
-        )
-
-
-    # -----------------------------
-    # FINAL RESPONSE
-    # -----------------------------
 
     return {
 
-        "resume_score": score,
 
-        "predicted_role": role,
+        "resume_score": final_score,
 
-        "skills_found": found_skills,
+
+        "semantic_match_score": ai_score,
+
+
+        "matched_skills": matched_skills,
+
+
+        "missing_skills": missing_skills,
+
+
+        "suggestions": suggestions,
+
+
 
         "education_present": education_present,
 
+
         "projects_present": projects_present,
+
 
         "experience_present": experience_present,
 
+
         "certification_present": certification_present,
+
 
         "github_present": github_present,
 
-        "linkedin_present": linkedin_present,
 
-        "suggestions": suggestions
+        "linkedin_present": linkedin_present
+
     }
