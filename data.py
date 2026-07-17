@@ -30,7 +30,7 @@ class User(Base):
     username = Column(String(50), unique=True, index=True)
     password = Column(String(255))
 
-    Base.metadata.create_all(bind=engine)
+    # Base.metadata.create_all(bind=engine)
 
     def get_db():
         db = SessionLocal()
