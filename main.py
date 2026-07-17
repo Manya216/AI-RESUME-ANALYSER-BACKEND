@@ -50,7 +50,11 @@ from chat import router as chat_router
 # CREATE TABLES
 # -----------------------------
 
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+    print("Database connected")
+except Exception as e:
+    print("Database connection failed:", e)
 
 
 
