@@ -3,32 +3,27 @@ from pydantic import BaseModel
 import ollama
 
 
+
 router = APIRouter()
-
-
-# Connect to Ollama through Cloudflare Tunnel
-client = ollama.Client(
-    host="https://about-dollars-ice-train.trycloudflare.com"
-)
 
 
 
 class ChatRequest(BaseModel):
 
-    resume_text: str
-
-    message: str
+    resume_text:str
+    message:str
 
 
 
 
 
 @router.post("/chat")
-async def chat(data: ChatRequest):
+async def chat(data:ChatRequest):
 
     try:
 
-        prompt = f"""
+
+        prompt=f"""
 
 You are an AI Resume Assistant.
 
@@ -46,15 +41,15 @@ Question:
 """
 
 
-        response = client.chat(
+        response=ollama.chat(
 
             model="llama3.2",
 
             messages=[
 
                 {
-                    "role": "user",
-                    "content": prompt
+                    "role":"user",
+                    "content":prompt
                 }
 
             ]
@@ -64,7 +59,8 @@ Question:
 
         return {
 
-            "reply": response["message"]["content"]
+            "reply":
+            response["message"]["content"]
 
         }
 
@@ -72,10 +68,10 @@ Question:
 
     except Exception as e:
 
-        print("OLLAMA CHAT ERROR:", e)
 
         return {
 
-            "reply": str(e)
+            "reply":
+            str(e)
 
         }
