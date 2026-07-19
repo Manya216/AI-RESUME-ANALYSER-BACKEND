@@ -1,7 +1,9 @@
 import os
 import time
 
+from dotenv import load_dotenv
 
+load_dotenv()
 
 
 from fastapi import (
@@ -50,11 +52,7 @@ from chat import router as chat_router
 # CREATE TABLES
 # -----------------------------
 
-try:
-    Base.metadata.create_all(bind=engine)
-    print("Database connected")
-except Exception as e:
-    print("Database connection failed:", e)
+Base.metadata.create_all(bind=engine)
 
 
 
