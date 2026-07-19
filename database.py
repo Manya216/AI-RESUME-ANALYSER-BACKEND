@@ -7,25 +7,19 @@ DATABASE_URL = URL.create(
 
     drivername="mysql+pymysql",
 
-    username="avnadmin",
+    username="root",
 
-    password="AVNS_fa71Ufz4fQaveW75ME4",
+    password="*",
 
-    host="mysql-c46e11d-resumeanalysis.a.aivencloud.com",
+    host="localhost",
 
-    port=19801,
+    port=3306,
 
-    database="defaultdb"
+    database="resume_analyzer"
 )
 
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,
-    pool_recycle=300,
-    connect_args={
-        "connect_timeout": 10
-    }
-)
+engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(
 
     autocommit=False,
