@@ -8,14 +8,15 @@ DATABASE_URL = URL.create(
 
     username="root",
 
-    password="IIuqEFAiqTEuKbCnhblqICyOQWppunyK",
+    password="*",
 
-    host="kodama.proxy.rlwy.net",
+    host="localhost",
 
-    port=31618,
+    port=3306,
 
-    database="railway"
+    database="resume_analyzer"
 )
+
 
 
 
@@ -30,7 +31,7 @@ class User(Base):
     username = Column(String(50), unique=True, index=True)
     password = Column(String(255))
 
-    # Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 
     def get_db():
         db = SessionLocal()
